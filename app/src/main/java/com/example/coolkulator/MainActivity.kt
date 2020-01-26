@@ -21,6 +21,9 @@ class MainActivity : AppCompatActivity() {
     //If true, do not allow the add another DOT
     var lastDot:Boolean = false
 
+    //if true, a total has been calculated
+    var isTotal:Boolean = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -37,7 +40,14 @@ class MainActivity : AppCompatActivity() {
             stateError = false
         } else {
             // If not, already there is a valid expression so append to it
-            textInput.append((view as Button).text)
+            //this maintains the previous number and adds to the position next to it
+            //todo check if the output is not the total before appending, if it is then override with new value to calculate
+            if (isTotal && lastNumeric) {
+                textInput.text = (view as Button).text
+                isTotal = false
+            } else {
+                textInput.append((view as Button).text)
+            }
         }
         //set the flag
         lastNumeric = true
@@ -73,6 +83,7 @@ class MainActivity : AppCompatActivity() {
         lastNumeric = false
         stateError = false
         lastDot = false
+        isTotal = false
     }
 
     /**
@@ -91,6 +102,7 @@ class MainActivity : AppCompatActivity() {
                 val result = expression.evaluate()
                 textInput.text = result.toString()
                 lastDot = true //results contain a dot
+                isTotal = true
             } catch (e: ArithmeticException) {
                 //display an error message
                 textInput.text = "Error"
